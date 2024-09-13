@@ -21,23 +21,25 @@ workflows:
           brew install cocoapods
       - name: Install CocoaPods dependencies
         script: |
-          cd ios
+          cd charlie/ios
           pod install --verbose || exit 1
       - name: List directory contents after pod install (debug)
         script: |
-          ls -la ios
-      - name: Verify .xcworkspace file exists
+          ls -la charlie/ios
+      - name: Verify .xcworkspace file exists (correct path)
         script: |
-          if [ ! -f ios/Runner.xcworkspace ]; then
-            echo "Runner.xcworkspace not found!"
+          if [ ! -f charlie/ios/Runner.xcworkspace ]; then
+            echo "Runner.xcworkspace not found in charlie/ios directory!"
             exit 1
+          else
+            echo "Runner.xcworkspace found in charlie/ios directory."
           fi
       - name: Build iOS
         script: |
-          cd ios
+          cd charlie/ios
           xcodebuild -workspace Runner.xcworkspace -scheme Runner -sdk iphoneos -configuration Release archive -archivePath $HOME/build/Runner.xcarchive
       - name: Export IPA
         script: |
-          xcodebuild -exportArchive -archivePath $HOME/build/Runner.xcarchive -exportOptionsPlist ios/Runner/ExportOptions.plist -exportPath $HOME/build
+          xcodebuild -exportArchive -archivePath $HOME/build/Runner.xcarchive -exportOptionsPlist charlie/ios/Runner/ExportOptions.plist -exportPath $HOME/build
     artifacts:
       - build/Runner.ipa
