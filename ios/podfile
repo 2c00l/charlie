@@ -3,7 +3,6 @@ platform :ios, '11.0'
 target 'Runner' do
   use_frameworks!
   
-  # Pods for your native iOS app can be added here, for example:
+  # Add any necessary pods here
   # pod 'AFNetworking', '~> 4.0'
-  
 end
