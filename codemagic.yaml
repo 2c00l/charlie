@@ -22,7 +22,10 @@ workflows:
       - name: Install CocoaPods dependencies
         script: |
           cd ios
-          pod install --verbose
+          pod install --verbose || exit 1
+      - name: List directory contents after pod install (debug)
+        script: |
+          ls -la ios
       - name: Verify .xcworkspace file exists
         script: |
           if [ ! -f ios/Runner.xcworkspace ]; then
