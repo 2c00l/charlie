@@ -6,10 +6,13 @@ workflows:
     environment:
       xcode: latest
     scripts:
-      - name: Update CocoaPods
+      - name: Install Homebrew (if missing)
         script: |
-          sudo gem install cocoapods
-      - name: Install CocoaPods
+          /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+      - name: Install CocoaPods using Homebrew
+        script: |
+          brew install cocoapods
+      - name: Install CocoaPods dependencies
         script: |
           cd ios
           pod install
