@@ -34,7 +34,8 @@ workflows:
           fi
       - name: Build iOS
         script: |
-          xcodebuild -workspace ios/Runner.xcworkspace -scheme Runner -sdk iphoneos -configuration Release archive -archivePath $HOME/build/Runner.xcarchive
+          cd ios
+          xcodebuild -workspace Runner.xcworkspace -scheme Runner -sdk iphoneos -configuration Release archive -archivePath $HOME/build/Runner.xcarchive
       - name: Export IPA
         script: |
           xcodebuild -exportArchive -archivePath $HOME/build/Runner.xcarchive -exportOptionsPlist ios/Runner/ExportOptions.plist -exportPath $HOME/build
