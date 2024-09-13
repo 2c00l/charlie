@@ -6,6 +6,13 @@ workflows:
     environment:
       xcode: latest
     scripts:
+      - name: Update Ruby to 2.7
+        script: |
+          brew install rbenv
+          rbenv init
+          rbenv install 2.7.4
+          rbenv global 2.7.4
+          ruby -v
       - name: Install Homebrew (if missing)
         script: |
           /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
