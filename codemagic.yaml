@@ -1,0 +1,20 @@
+workflows:
+  ios-workflow:
+    name: iOS Build Workflow
+    max_build_duration: 60
+    instance_type: macos_standard
+    environment:
+      xcode: latest
+    scripts:
+      - name: Install CocoaPods
+        script: |
+          cd ios
+          pod install
+      - name: Build iOS
+        script: |
+          xcodebuild -workspace Runner.xcworkspace -scheme Runner -sdk iphoneos -configuration Release archive -archivePath $HOME/build/Runner.xcarchive
+      - name: Export IPA
+        script: |
+          xcodebuild -exportArchive -archivePath $HOME/build/Runner.xcarchive -exportOptionsPlist ios/Runner/ExportOptions.plist -exportPath $HOME/build
+    artifacts:
+      - build/Runner.ipa
