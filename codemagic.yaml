@@ -6,6 +6,9 @@ workflows:
     environment:
       xcode: latest
     scripts:
+      - name: Update CocoaPods
+        script: |
+          sudo gem install cocoapods
       - name: Install CocoaPods
         script: |
           cd ios
