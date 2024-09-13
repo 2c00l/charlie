@@ -2,7 +2,8 @@ platform :ios, '11.0'
 
 target 'Runner' do
   use_frameworks!
-  use_modular_headers!
-
-  flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
+  
+  # Pods for your native iOS app can be added here, for example:
+  # pod 'AFNetworking', '~> 4.0'
+  
 end
