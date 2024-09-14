@@ -29,14 +29,17 @@ workflows:
           echo "CocoaPods installed."
       - name: List contents of ios and Pods (debug logs)
         script: |
-          echo "Listing ios directory:"
+          echo "Listing ios directory after pod install:"
           ls -la ios
           echo "Listing ios/Pods directory (if exists):"
           ls -la ios/Pods || echo "Pods directory not found!"
-      - name: Verify .xcworkspace file exists (fix directory issue)
+      - name: Verify .xcworkspace file exists (detailed directory logging)
         script: |
-          cd ios
-          WORKSPACE_PATH=$(pwd)/Runner.xcworkspace
+          echo "Current working directory is: $(pwd)"
+          echo "Checking contents of ios directory right before verification:"
+          ls -la ios
+          WORKSPACE_PATH=$(pwd)/ios/Runner.xcworkspace
+          echo "Checking for .xcworkspace at path: $WORKSPACE_PATH"
           if [ ! -f $WORKSPACE_PATH ]; then
             echo "ERROR: Runner.xcworkspace not found at $WORKSPACE_PATH!"
             exit 1
