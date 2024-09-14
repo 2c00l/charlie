@@ -33,9 +33,10 @@ workflows:
           ls -la ios
           echo "Listing ios/Pods directory (if exists):"
           ls -la ios/Pods || echo "Pods directory not found!"
-      - name: Verify .xcworkspace file exists (detailed logging)
+      - name: Verify .xcworkspace file exists (fix directory issue)
         script: |
-          WORKSPACE_PATH=$(pwd)/ios/Runner.xcworkspace
+          cd ios
+          WORKSPACE_PATH=$(pwd)/Runner.xcworkspace
           if [ ! -f $WORKSPACE_PATH ]; then
             echo "ERROR: Runner.xcworkspace not found at $WORKSPACE_PATH!"
             exit 1
@@ -44,7 +45,8 @@ workflows:
           fi
       - name: Build iOS (detailed logging)
         script: |
-          WORKSPACE_PATH=$(pwd)/ios/Runner.xcworkspace
+          cd ios
+          WORKSPACE_PATH=$(pwd)/Runner.xcworkspace
           echo "Building using workspace at $WORKSPACE_PATH"
           xcodebuild -workspace $WORKSPACE_PATH -scheme Runner -sdk iphoneos -configuration Release archive -archivePath $HOME/build/Runner.xcarchive || { echo "xcodebuild failed!"; exit 1; }
       - name: Export IPA (detailed logging)
