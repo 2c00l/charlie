@@ -6,40 +6,50 @@ workflows:
     environment:
       xcode: latest
     scripts:
-      - name: Update Ruby to 2.7
+      - name: Update Ruby to 2.7 (Log Ruby version)
         script: |
           brew install rbenv
           rbenv init
           rbenv install 2.7.4
           rbenv global 2.7.4
           ruby -v
-      - name: Install Homebrew (if missing)
+          echo "Ruby updated and version is:"
+          ruby -v
+      - name: Install Homebrew (with logging)
         script: |
-          /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-      - name: Install CocoaPods using Homebrew
+          /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)" || echo "Homebrew installation failed!"
+      - name: Install CocoaPods using Homebrew (with logging)
         script: |
-          brew install cocoapods
-      - name: Install CocoaPods dependencies
+          brew install cocoapods || echo "CocoaPods installation failed!"
+      - name: Install CocoaPods dependencies (detailed logging)
         script: |
-          cd charlie/ios
-          pod install --verbose || exit 1
-      - name: List directory contents after pod install (debug)
+          cd ios
+          echo "Running pod install in $(pwd)"
+          pod install --verbose || { echo "pod install failed!"; exit 1; }
+          echo "CocoaPods installed."
+      - name: List contents of ios and Pods (debug logs)
         script: |
-          ls -la charlie/ios
-      - name: Verify .xcworkspace file exists (correct path)
+          echo "Listing ios directory:"
+          ls -la ios
+          echo "Listing ios/Pods directory (if exists):"
+          ls -la ios/Pods || echo "Pods directory not found!"
+      - name: Verify .xcworkspace file exists (detailed logging)
         script: |
-          if [ ! -f charlie/ios/Runner.xcworkspace ]; then
-            echo "Runner.xcworkspace not found in charlie/ios directory!"
+          WORKSPACE_PATH=$(pwd)/ios/Runner.xcworkspace
+          if [ ! -f $WORKSPACE_PATH ]; then
+            echo "ERROR: Runner.xcworkspace not found at $WORKSPACE_PATH!"
             exit 1
           else
-            echo "Runner.xcworkspace found in charlie/ios directory."
+            echo "SUCCESS: Runner.xcworkspace found at $WORKSPACE_PATH."
           fi
-      - name: Build iOS
+      - name: Build iOS (detailed logging)
         script: |
-          cd charlie/ios
-          xcodebuild -workspace Runner.xcworkspace -scheme Runner -sdk iphoneos -configuration Release archive -archivePath $HOME/build/Runner.xcarchive
-      - name: Export IPA
+          WORKSPACE_PATH=$(pwd)/ios/Runner.xcworkspace
+          echo "Building using workspace at $WORKSPACE_PATH"
+          xcodebuild -workspace $WORKSPACE_PATH -scheme Runner -sdk iphoneos -configuration Release archive -archivePath $HOME/build/Runner.xcarchive || { echo "xcodebuild failed!"; exit 1; }
+      - name: Export IPA (detailed logging)
         script: |
-          xcodebuild -exportArchive -archivePath $HOME/build/Runner.xcarchive -exportOptionsPlist charlie/ios/Runner/ExportOptions.plist -exportPath $HOME/build
+          echo "Exporting IPA from $HOME/build/Runner.xcarchive"
+          xcodebuild -exportArchive -archivePath $HOME/build/Runner.xcarchive -exportOptionsPlist ios/Runner/ExportOptions.plist -exportPath $HOME/build || { echo "Export failed!"; exit 1; }
     artifacts:
       - build/Runner.ipa
