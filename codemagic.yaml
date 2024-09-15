@@ -16,14 +16,26 @@ workflows:
           -scheme Runner \
           -sdk iphoneos \
           -configuration Release \
-          archive -archivePath $CM_BUILD_DIR/Runner.xcarchive \
+          archive \
+          -archivePath $CM_BUILD_DIR/Runner.xcarchive \
           DEVELOPMENT_TEAM=ARU75H5867 \
           -allowProvisioningUpdates
-      - name: Export IPA
-        script: |
-          xcodebuild -exportArchive \
-          -archivePath $CM_BUILD_DIR/Runner.xcarchive \
-          -exportOptionsPlist ios/Runner/ExportOptions.plist \
-          -exportPath $CM_BUILD_DIR
-    artifacts:
-      - $CM_BUILD_DIR/*.ipa
+    publishing:
+      scripts:
+        - name: Export IPA
+          script: |
+            xcodebuild -exportArchive \
+            -archivePath $CM_BUILD_DIR/Runner.xcarchive \
+            -exportOptionsPlist ios/ExportOptions.plist \
+            -exportPath $CM_BUILD_DIR/Runner.ipa \
+            -allowProvisioningUpdates
+    environment_variables:
+      groups:
+        - your_environment_group_name_here  # Replace with the group name you created
+
+    code_signing:
+      apple_id: $APPLE_ID               # <- Referencing your environment variable
+      team_id: $TEAM_ID                 # <- Referencing your environment variable
+      app_store_connect_apple_id: $APPLE_ID  # <- Referencing your environment variable
+      app_specific_password: $APP_SPECIFIC_PASSWORD # <- Referencing your environment variable
+      distribution_type: app-store
