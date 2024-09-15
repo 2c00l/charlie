@@ -4,9 +4,9 @@ workflows:
     max_build_duration: 60
     instance_type: mac_mini_m2
     environment:
-      xcode: latest
       groups:
-        - AppStore_Group  # Reference the group you created here
+        - AppStore_Group  # Your environment group set in Codemagic
+      xcode: latest
     scripts:
       - name: Install CocoaPods
         script: |
@@ -14,20 +14,26 @@ workflows:
           pod install
       - name: Build iOS
         script: |
+          set -e
           xcodebuild -workspace ios/Runner.xcworkspace \
           -scheme Runner \
-          -sdk iphoneos \
           -configuration Release \
-          archive \
           -archivePath $CM_BUILD_DIR/Runner.xcarchive \
           DEVELOPMENT_TEAM=$TEAM_ID \
-          -allowProvisioningUpdates
+          -allowProvisioningUpdates archive
     publishing:
       scripts:
         - name: Export IPA
           script: |
-            xcodebuild -exportArchive \
-            -archivePath $CM_BUILD_DIR/Runner.xcarchive \
+            xcodebuild -exportArchive -archivePath $CM_BUILD_DIR/Runner.xcarchive \
             -exportOptionsPlist ios/ExportOptions.plist \
             -exportPath $CM_BUILD_DIR/Runner.ipa \
             -allowProvisioningUpdates
+    artifacts:
+      - $CM_BUILD_DIR/Runner.ipa
+    app_store_connect:
+      apple_id: $APPLE_ID
+      team_id: $TEAM_ID
+      app_store_connect_apple_id: $APP_STORE_CONNECT_APPLE_ID
+      app_specific_password: $APP_SPECIFIC_PASSWORD
+      distribution_type: app-store
