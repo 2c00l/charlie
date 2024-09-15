@@ -38,8 +38,3 @@ workflows:
     artifacts:
       - $CM_BUILD_DIR/Runner.ipa
       - $CM_BUILD_DIR/Runner.xcarchive
-    signing:
-      ios_signing:
-        certificate_url: $CERTIFICATE_URL  # This is automatically generated in Codemagic when you upload the .p12 file
-        certificate_password: $CERTIFICATE_PASSWORD
-        provisioning_profile_url: $PROVISIONING_PROFILE_URL  # Automatically generated when you upload the .mobileprovision file
