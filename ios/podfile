@@ -4,8 +4,11 @@ target 'Runner' do
   use_frameworks!
   use_modular_headers!
 
-  # You can manually add any necessary pod dependencies here if needed
-  # e.g., pod 'SomeDependency'
+  # Add any iOS-specific dependencies here, if needed.
+  # Example:
+  # pod 'AFNetworking', '~> 4.0'
+  
 end
+
 
 
