@@ -4,6 +4,8 @@ target 'Runner' do
   use_frameworks!
   use_modular_headers!
 
-  flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
+  # You can manually add any necessary pod dependencies here if needed
+  # e.g., pod 'SomeDependency'
 end
+
 
