@@ -4,11 +4,5 @@ target 'Runner' do
   use_frameworks!
   use_modular_headers!
 
-  # Add any iOS-specific dependencies here, if needed.
-  # Example:
-  # pod 'AFNetworking', '~> 4.0'
-  
+  flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
 end
-
-
-
