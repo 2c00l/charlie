@@ -15,30 +15,18 @@ workflows:
           ruby -v
           echo "Ruby updated and version is:"
           ruby -v
-      - name: Install Homebrew (with logging)
-        script: |
-          /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)" || echo "Homebrew installation failed!"
       - name: Install CocoaPods using Homebrew (with logging)
         script: |
           brew install cocoapods || echo "CocoaPods installation failed!"
-      - name: Install CocoaPods dependencies (detailed logging)
+      - name: Install CocoaPods dependencies
         script: |
           cd ios
           echo "Running pod install in $(pwd)"
           pod install --verbose || { echo "pod install failed!"; exit 1; }
-          echo "CocoaPods installed."
-      - name: List contents of ios and Pods (debug logs)
+      - name: Verify .xcworkspace file exists
         script: |
-          echo "Listing ios directory after pod install:"
-          ls -la ios
-          echo "Listing ios/Pods directory (if exists):"
-          ls -la ios/Pods || echo "Pods directory not found!"
-      - name: Verify .xcworkspace file exists (detailed directory logging)
-        script: |
-          echo "Current working directory is: $(pwd)"
-          echo "Checking contents of ios directory right before verification:"
-          ls -la ios
-          WORKSPACE_PATH=$(pwd)/ios/Runner.xcworkspace
+          cd ios
+          WORKSPACE_PATH=$(pwd)/Runner.xcworkspace
           echo "Checking for .xcworkspace at path: $WORKSPACE_PATH"
           if [ ! -f $WORKSPACE_PATH ]; then
             echo "ERROR: Runner.xcworkspace not found at $WORKSPACE_PATH!"
@@ -46,13 +34,12 @@ workflows:
           else
             echo "SUCCESS: Runner.xcworkspace found at $WORKSPACE_PATH."
           fi
-      - name: Build iOS (detailed logging)
+      - name: Build iOS
         script: |
-          cd ios
           WORKSPACE_PATH=$(pwd)/Runner.xcworkspace
           echo "Building using workspace at $WORKSPACE_PATH"
           xcodebuild -workspace $WORKSPACE_PATH -scheme Runner -sdk iphoneos -configuration Release archive -archivePath $HOME/build/Runner.xcarchive || { echo "xcodebuild failed!"; exit 1; }
-      - name: Export IPA (detailed logging)
+      - name: Export IPA
         script: |
           echo "Exporting IPA from $HOME/build/Runner.xcarchive"
           xcodebuild -exportArchive -archivePath $HOME/build/Runner.xcarchive -exportOptionsPlist ios/Runner/ExportOptions.plist -exportPath $HOME/build || { echo "Export failed!"; exit 1; }
