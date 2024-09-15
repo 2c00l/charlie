@@ -6,15 +6,6 @@ workflows:
         DEVELOPMENT_TEAM: "ARU75H5867"  # Your team ID
         CERTIFICATE_PASSWORD: "595ABYbc"  # Your .p12 certificate password
     scripts:
-      - name: Set up keychain for code signing
-        script: |
-          security create-keychain -p "" build.keychain
-          security list-keychains -d user -s build.keychain
-          security default-keychain -s build.keychain
-          security unlock-keychain -p "" build.keychain
-          security set-keychain-settings -t 3600 -u build.keychain
-          security import /Users/builder/.certs/certificate.p12 -P $CERTIFICATE_PASSWORD -A
-          security set-key-partition-list -S apple-tool:,apple: -s -k "" build.keychain
       - name: Install dependencies
         script: |
           gem install cocoapods
