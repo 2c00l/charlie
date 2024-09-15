@@ -6,7 +6,7 @@ workflows:
     environment:
       xcode: latest
       groups:
-        - your_environment_group_name_here  # Replace with the group name you created
+        - app_store_credentials  # Replace with the actual group name
     scripts:
       - name: Install CocoaPods
         script: |
