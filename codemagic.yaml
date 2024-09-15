@@ -31,3 +31,10 @@ workflows:
             -allowProvisioningUpdates
     artifacts:
       - $CM_BUILD_DIR/Runner.ipa
+
+artifacts:
+  - $CM_BUILD_DIR/Runner.ipa
+
+environment_variables:
+  groups:
+    - AppStore_Group
