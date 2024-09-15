@@ -11,15 +11,24 @@ workflows:
           pod deintegrate
           pod install --repo-update || pod install
           
-      - name: Build iOS
+      - name: Verify Workspace and Directory
         script: |
+          echo "Current directory:"
+          pwd
+          echo "Listing ios directory:"
+          ls -la ios
           if [ -d "ios/Runner.xcworkspace" ]; then
             echo "Runner.xcworkspace exists."
           else
-            echo "Creating Runner.xcworkspace manually."
-            xcodebuild -create-xcworkspace -scheme Runner
+            echo "ERROR: Runner.xcworkspace not found!"
+            exit 1
           fi
-          xcodebuild -workspace Runner.xcworkspace -scheme Runner -sdk iphoneos -configuration Release archive -archivePath $CM_BUILD_DIR/Runner.xcarchive
+
+      - name: Build iOS
+        script: |
+          WORKSPACE_PATH=$(pwd)/ios/Runner.xcworkspace
+          echo "Building using workspace at $WORKSPACE_PATH"
+          xcodebuild -workspace $WORKSPACE_PATH -scheme Runner -sdk iphoneos -configuration Release archive -archivePath $CM_BUILD_DIR/Runner.xcarchive || { echo "xcodebuild failed!"; exit 1; }
 
       - name: Export IPA
         script: |
