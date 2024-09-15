@@ -18,7 +18,7 @@ workflows:
             -sdk iphoneos \
             -configuration Release \
             archive -archivePath $CM_BUILD_DIR/Runner.xcarchive \
-            DEVELOPMENT_TEAM=$TEAM_ID \
+            DEVELOPMENT_TEAM=ARU75H5867 \  # Hardcoded your Team ID here
             -allowProvisioningUpdates
     publishing:
       scripts:
@@ -31,10 +31,3 @@ workflows:
             -allowProvisioningUpdates
     artifacts:
       - $CM_BUILD_DIR/Runner.ipa
-
-artifacts:
-  - $CM_BUILD_DIR/Runner.ipa
-
-environment_variables:
-  groups:
-    - AppStore_Group
