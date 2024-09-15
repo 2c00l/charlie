@@ -6,7 +6,7 @@ workflows:
     environment:
       xcode: latest
       groups:
-        - app_store_credentials  # Replace with the actual group name
+        - AppStore_Group  # Reference the group you created here
     scripts:
       - name: Install CocoaPods
         script: |
@@ -20,7 +20,7 @@ workflows:
           -configuration Release \
           archive \
           -archivePath $CM_BUILD_DIR/Runner.xcarchive \
-          DEVELOPMENT_TEAM=ARU75H5867 \
+          DEVELOPMENT_TEAM=$TEAM_ID \
           -allowProvisioningUpdates
     publishing:
       scripts:
