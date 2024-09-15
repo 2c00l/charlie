@@ -1,33 +1,45 @@
 workflows:
   ios-workflow:
     name: iOS Build Workflow
-    max_build_duration: 60
-    instance_type: mac_mini_m2
     environment:
-      xcode: latest
+      vars:
+        DEVELOPMENT_TEAM: "ARU75H5867"  # Your team ID
+        CERTIFICATE_PASSWORD: "595ABYbc"  # Your .p12 certificate password
     scripts:
-      - name: Install CocoaPods
+      - name: Set up keychain for code signing
         script: |
-          cd ios
+          security create-keychain -p "" build.keychain
+          security list-keychains -d user -s build.keychain
+          security default-keychain -s build.keychain
+          security unlock-keychain -p "" build.keychain
+          security set-keychain-settings -t 3600 -u build.keychain
+          security import /Users/builder/.certs/certificate.p12 -P $CERTIFICATE_PASSWORD -A
+          security set-key-partition-list -S apple-tool:,apple: -s -k "" build.keychain
+      - name: Install dependencies
+        script: |
+          gem install cocoapods
           pod install
-      - name: Build iOS
+      - name: Build the app
         script: |
-          xcodebuild \
-            -workspace ios/Runner.xcworkspace \
-            -scheme Runner \
-            -sdk iphoneos \
-            -configuration Release \
-            archive -archivePath $CM_BUILD_DIR/Runner.xcarchive \
-            DEVELOPMENT_TEAM=ARU75H5867 \
-            -allowProvisioningUpdates  # Removed the stray double quotes and space
-    publishing:
-      scripts:
-        - name: Export IPA
-          script: |
-            xcodebuild -exportArchive \
-            -archivePath $CM_BUILD_DIR/Runner.xcarchive \
-            -exportOptionsPlist ios/ExportOptions.plist \
-            -exportPath $CM_BUILD_DIR/Runner.ipa \
-            -allowProvisioningUpdates
+          xcodebuild -workspace ios/Runner.xcworkspace \
+          -scheme Runner \
+          -sdk iphoneos \
+          -configuration Release \
+          archive -archivePath $CM_BUILD_DIR/Runner.xcarchive \
+          DEVELOPMENT_TEAM=$DEVELOPMENT_TEAM \
+          -allowProvisioningUpdates
+      - name: Export IPA
+        script: |
+          xcodebuild -exportArchive \
+          -archivePath $CM_BUILD_DIR/Runner.xcarchive \
+          -exportOptionsPlist ios/ExportOptions.plist \
+          -exportPath $CM_BUILD_DIR/Runner.ipa \
+          -allowProvisioningUpdates
     artifacts:
       - $CM_BUILD_DIR/Runner.ipa
+      - $CM_BUILD_DIR/Runner.xcarchive
+    signing:
+      ios_signing:
+        certificate_url: $CERTIFICATE_URL  # This is automatically generated in Codemagic when you upload the .p12 file
+        certificate_password: $CERTIFICATE_PASSWORD
+        provisioning_profile_url: $PROVISIONING_PROFILE_URL  # Automatically generated when you upload the .mobileprovision file
