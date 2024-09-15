@@ -5,6 +5,8 @@ workflows:
     instance_type: mac_mini_m2
     environment:
       xcode: latest
+      groups:
+        - your_environment_group_name_here  # Replace with the group name you created
     scripts:
       - name: Install CocoaPods
         script: |
@@ -29,13 +31,3 @@ workflows:
             -exportOptionsPlist ios/ExportOptions.plist \
             -exportPath $CM_BUILD_DIR/Runner.ipa \
             -allowProvisioningUpdates
-    environment_variables:
-      groups:
-        - your_environment_group_name_here  # Replace with the group name you created
-
-    code_signing:
-      apple_id: $APPLE_ID               # <- Referencing your environment variable
-      team_id: $TEAM_ID                 # <- Referencing your environment variable
-      app_store_connect_apple_id: $APPLE_ID  # <- Referencing your environment variable
-      app_specific_password: $APP_SPECIFIC_PASSWORD # <- Referencing your environment variable
-      distribution_type: app-store
